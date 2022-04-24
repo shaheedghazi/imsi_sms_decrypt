@@ -101,12 +101,12 @@ Options:
 
 #### For save all imsi numbers with details in sqlite file.(It's will show you output on screen and also save in file)
 ```
-python imsi.py -s example.db
+sudo python imsi.py -s example.db
 ```
 
 #### For capture only specific imsi. (It's will show you only your given imsi result)
 ```
-python imsi.py -m imsi_here (Example: python imsi.py -m 123456789101112)
+python imsi.py -m imsi_here (Example: sudo python imsi.py -m 123456789101112)
 ```
 
  ## Capturing SMS :
@@ -137,12 +137,12 @@ Options:
 
 #### For save all sms in sqlite file.(It's will show you output on screen and also save in file)
 ```
-python sms.py -s example.db
+sudo python sms.py -s example.db
 ```
 
 #### For capture only specific phone number sms. (It's will show you only your given phone number result)
 ```
-python sms.py -n phone_number_here (Example: python SmsEvil.py -n 09095676722)
+sudo python sms.py -n phone_number_here (Example: sudo python sms.py -n 09095676722)
 ```
 
 # Requirements:
@@ -153,7 +153,4 @@ rtl-sdr device available on lazada:
 
 name of product: RTL-SDR Blog RTL SDR V3 R820T2 RTL2832U 1PPM TCXO SMA RTLSDR Software Receiver Defined Radio
 
-# Contact:
-Email :0xbit25125@gmail.com
 
-# Thanks to YAHAWAH
