@@ -153,4 +153,5 @@ rtl-sdr device available on lazada:
 
 name of product: RTL-SDR Blog RTL SDR V3 R820T2 RTL2832U 1PPM TCXO SMA RTLSDR Software Receiver Defined Radio
 
+this project is currently not maintained. 
 
