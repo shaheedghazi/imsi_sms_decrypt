@@ -1,22 +1,24 @@
 # coding: latin-1
 
 """
-About: This program shows you sender number, receiver number, sms text, sending time of cellphones around you.
+About: This program shows you sender number, receiver number, sms text, sending time of cellphones around you. The get_sms function listens to the live capture of GSM SMS packets on a specified port and interface. It then extracts relevant information like the sender, receiver, text and sending time of the SMS packet. If the options.number argument is not specified, it prints out all SMS packets captured. If it is specified, it checks if the specified number matches the sender or receiver of the SMS packet and prints it out if there is a match.
+
+In summary, the purpose of this program is to sniff and display GSM SMS packets on a specified port and interface, and to optionally save the captured messages to an SQLite database. However, it's worth noting that the program's author has included a disclaimer that it's for educational purposes only, and should not be used for illegal activities.
 
 Disclaimer:-
 This program was made to understand how GSM network works. Not for bad hacking !
 We are not responsible for any illegal activity !
 
 About:-
-Author: sheryar (ninjhacks)
-Created on : 20/6/2019
+Author: o3t1w
+Created on : 11/5/2023
 """
 
 import pyshark
 from optparse import OptionParser
 import os, sys
 
-class SmsEvil:
+class SmsSniffer:
 
     text = ""
     sender = ""
@@ -41,7 +43,7 @@ class SmsEvil:
         title = '''
  _|_|_|    _|_|_|_|  _|_|_|      _|_|_|  _|_|_|_|    _|_|_|       
  _|    _|  _|        _|    _|  _|        _|        _|           \`~'/     
- _|    _|  _|_|_|    _| CODED BY:OXBIT   _|_|_|    _|           (o o)  
+ _|    _|  _|_|_|    _| CODED BY: o3t1w _|_|_|    _|           (o o)  
  _|    _|  _|        _|    _|        _|  _|        _|            \ / \ 
  _|_|_|    _|_|_|_|  _|_|_|    _|_|_|    _|_|_|_|    _|_|_|       " 
 	               MOBILE PHONE SNIFFING TOOL     '''
@@ -67,18 +69,3 @@ class SmsEvil:
                         self.output()
                     elif options.number == self.receiver:
                         self.output()
-
-if __name__ == "__main__":
-	parser = OptionParser(usage="%prog: [options]")
-	parser.add_option("-i", "--iface", dest="iface", default="lo", help="Interface (default : lo)")
-	parser.add_option("-p", "--port", dest="port", default="4729", type="int", help="Port (default : 4729)")    
-	parser.add_option("-n", "--number", dest="number", default="", type="string", help='Phone number (default : None)')
-	parser.add_option("-s", "--save", dest="save", default=None, type="string", help="Save all text messages to sqlite file. (default : None)")
-	(options, args) = parser.parse_args()
-try:
-    SmsEvil = SmsEvil()
-    SmsEvil.header()
-    capture = pyshark.LiveCapture(interface=options.iface, bpf_filter="port {} and not icmp and udp".format(options.port))
-    SmsEvil.get_sms(capture)
-except:
-    print ("Stop sniffing")
