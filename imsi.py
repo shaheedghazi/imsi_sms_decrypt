@@ -1,5 +1,7 @@
 # IMSI Decrypter
 # Author: o3t1w
+# Description: This is a Python script that implements an IMSI Decrypter using the Scapy library. It listens for GSM traffic on the specified interface and extracts the IMSI and TMSI from the packets. It then stores this information in a SQLite database and displays it on the screen. The IMSI is validated to ensure that it has 15 digits and the TMSI is validated to ensure that it has between 4 and 8 hexadecimal digits. The user can also specify an IMSI to filter the output and only display data for that IMSI. The script uses the tabulate library to display the data in a table format.
+
 
 import datetime
 import os
