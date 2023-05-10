@@ -1,16 +1,13 @@
-# coding: latin-1
-
-"""
-DEDSEC TOOL
-"""
+# IMSI Decrypter
+# Author: o3t1w
 
 import pyshark
 from optparse import OptionParser
 import os, sys
 import datetime
+import sqlite3
 
-class ImsiEvil:
-
+class ImsiDecrypter:
     sql_conn = None
     imsi = ""
     tmsi = ""
@@ -22,7 +19,6 @@ class ImsiEvil:
     live_db = {}
 
     def sql_db(self):
-        import sqlite3
         self.sql_conn = sqlite3.connect(options.save)
         self.sql_conn.execute('CREATE TABLE IF NOT EXISTS imsi_data(id INTEGER PRIMARY KEY, imsi TEXT, tmsi TEXT, mcc INTEGER, mnc INTEGER, lac INTEGER, ci INTEGER, date_time timestamp)')
 
@@ -95,34 +91,38 @@ class ImsiEvil:
     def header(self):
         os.system('clear')
         title = '''
-                                                             
- _|_|_|    _|_|_|_|  _|_|_|      _|_|_|  _|_|_|_|    _|_|_|       
- _|    _|  _|        _|    _|  _|        _|        _|           \`~'/     
- _|    _|  _|_|_|    _| CODED BY:OXBIT   _|_|_|    _|           (o o)  
- _|    _|  _|        _|    _|        _|  _|        _|            \ / \ 
- _|_|_|    _|_|_|_|  _|_|_|    _|_|_|    _|_|_|_|    _|_|_|       " 
-	               MOBILE PHONE SNIFFING TOOL     '''
+                          IMSI Decrypter
+                     ======================
+
+        '''
         print ("\033[0;31;48m" + title)
-        print ("................................................................................")
+
+    def output(self):
+        os.system('clear')
         print("\033[0;37;48m ID \033[0;31;48m; \033[0;37;48m       IMSI       \033[0;31;48m;     \033[0;37;48mTMSI     \033[0;31;48m;   \033[0;37;48mMCC   \033[0;31;48m;  \033[0;37;48mMNC  \033[0;31;48m; \033[0;37;48m  LAC   \033[0;31;48m; \033[0;37;48m    CI\033[0;31;48m    ;")
         print ("\033[0;31;48m................................................................................")
-    
-    def output(self):
-        print("\033[0;37;48m {:3s}\033[0;31;48m; \033[0;37;48m {:16s} \033[0;31;48m; \033[0;37;48m {:12s}\033[0;31;48m; \033[0;37;48m\033[0;37;48m  {:5s} \033[0;31;48m;\033[0;37;48m   {:4s}\033[0;31;48m; \033[0;37;48m {:5}  \033[0;31;48m; \033[0;37;48m {:6}   \033[0;31;48m;".format(str(self.live_db[self.imsi]["id"]), self.imsi, self.live_db[self.imsi]["tmsi"], self.mcc, self.mnc, self.lac, self.ci))
-        print ("\033[0;31;48m................................................................................")
+        for imsi in self.live_db:
+            data = self.live_db[imsi]
+            print("\033[0;37;48m {:3s}\033[0;31;48m; \033[0;37;48m {:16s} \033[0;31;48m; \033[0;37;48m {:12s}\033[0;31;48m; \033[0;37;48m\033[0;37;48m  {:5s} \033[0;31;48m;\033[0;37;48m   {:4s}\033[0;31;48m; \033[0;37;48m {:5}  \033[0;31;48m; \033[0;37;48m {:6}   \033[0;31;48m;".format(str(data["id"]), imsi, data["tmsi"], data["mcc"], data["mnc"], data["lac"], data["ci"]))
+            print ("\033[0;31;48m................................................................................")
+
+    def start(self):
+        try:
+            self.header()
+            capture = pyshark.LiveCapture(interface=options.iface, bpf_filter="port {} and not icmp and udp".format(options.port))
+            for packet in capture.sniff_continuously():
+                self.get_imsi(packet)
+                self.output()
+        except KeyboardInterrupt:
+            print("Sniffing stopped")
+
 
 if __name__ == "__main__":
-	parser = OptionParser(usage="%prog: [options]")
-	parser.add_option("-i", "--iface", dest="iface", default="lo", help="Interface (default : lo)")
-	parser.add_option("-p", "--port", dest="port", default="4729", type="int", help="Port (default : 4729)")    
-	parser.add_option("-m", "--imsi", dest="imsi", default="", type="string", help='IMSI to track (default : None, Example: 123456789101112)')
-	parser.add_option("-s", "--save", dest="save", default=None, type="string", help="Save all imsi numbers to sqlite file. (default : None)")
-	(options, args) = parser.parse_args()
+    parser = OptionParser(usage="%prog: [options]")
+    parser.add_option("-i", "--iface", dest="iface", default="lo", help="Interface (default : lo)")
+    parser.add_option("-p", "--port", dest="port", default="4729", type="int", help="Port (default : 4729)")    
+    parser.add_option("-m", "--imsi", dest="imsi", default="", type="string", help='IMSI to track (default : None, Example: 123456789101112)')
+    (options, args) = parser.parse_args()
 
-try:
-    ImsiEvil = ImsiEvil()
-    ImsiEvil.header()
-    capture = pyshark.LiveCapture(interface=options.iface, bpf_filter="port {} and not icmp and udp".format(options.port))
-    ImsiEvil.get_imsi(capture)
-except:
-    print ("Stop sniffing")
+    imsi_decrypter = ImsiDecrypter()
+    imsi_decrypter.start()
